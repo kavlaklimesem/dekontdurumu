@@ -8,15 +8,31 @@
     <script type="text/javascript">
       // GitHub Pages için tek sayfa uygulaması yönlendirmesi
       (function() {
-        // Eğer doğrudan bir alt sayfaya erişilmeye çalışılıyorsa
-        var path = window.location.pathname;
-        if (path.indexOf('/dekontdurumu') === 0 && path !== '/dekontdurumu/' && path !== '/dekontdurumu/index.html') {
-          // Ana sayfaya yönlendir ve hash olarak yolu ekle
-          window.location.href = '/dekontdurumu/#' + path.replace('/dekontdurumu', '');
+        // URL'yi kontrol et
+        var currentUrl = window.location.href;
+        
+        // Eğer URL dekontdurumu/#/ içermiyorsa ve dekontdurumu/ içeriyorsa
+        if (currentUrl.includes('/dekontdurumu/') && 
+            !currentUrl.includes('/dekontdurumu/#/') && 
+            !currentUrl.endsWith('/dekontdurumu/') &&
+            !currentUrl.endsWith('/dekontdurumu/index.html')) {
+          
+          // Admin sayfasına erişim için özel kontrol
+          if (currentUrl.includes('/dekontdurumu/admin')) {
+            window.location.href = '/dekontdurumu/#/admin';
+            return;
+          }
+          
+          // Diğer sayfalar için genel yönlendirme
+          var path = window.location.pathname;
+          if (path.startsWith('/dekontdurumu/')) {
+            var newPath = path.replace('/dekontdurumu/', '/');
+            window.location.href = '/dekontdurumu/#' + newPath;
+          }
         }
       })();
     </script>
-    <script type="module" crossorigin src="/dekontdurumu/assets/index-BUfVFEXF.js"></script>
+    <script type="module" crossorigin src="/dekontdurumu/assets/index-DF2mYNF-.js"></script>
     <link rel="stylesheet" crossorigin href="/dekontdurumu/assets/index-T2JPA6Nh.css">
   </head>
   <body>
