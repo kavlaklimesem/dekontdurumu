@@ -43,23 +43,51 @@
     filtreDiv.style.backgroundColor = '#f8f9fa';
     filtreDiv.style.borderRadius = '5px';
 
-    // Benzersiz ID oluştur (tarayıcı uyumluluğu için)
-    const filtreId = `durum_filtresi_${Date.now()}`;
-
-    filtreDiv.innerHTML = `
-      <label for="${filtreId}" style="margin-right: 10px; font-weight: bold;">Ödeme Durumu Filtrele:</label>
-      <select id="${filtreId}" name="${filtreId}" style="padding: 5px; border-radius: 4px; border: 1px solid #ced4da;">
-        <option value="hepsi">Tümü</option>
-        <option value="teslim">Teslim Edildi</option>
-        <option value="teslim-edilmedi">Teslim Edilmedi</option>
-      </select>
-    `;
-
+    // Form oluştur - erişilebilirlik doğru çalışsın diye
+    const form = document.createElement('form');
+    form.setAttribute('role', 'search');
+    form.setAttribute('aria-label', 'Ödeme durumu filtreleme');
+    form.onsubmit = function(e) { e.preventDefault(); return false; };
+    
+    // Label oluştur
+    const label = document.createElement('label');
+    label.textContent = 'Ödeme Durumu Filtrele: ';
+    label.style.marginRight = '10px';
+    label.style.fontWeight = 'bold';
+    label.htmlFor = 'durumFiltre';
+    
+    // Select oluştur
+    const select = document.createElement('select');
+    select.id = 'durumFiltre';
+    select.name = 'durumFiltre';
+    select.style.padding = '5px';
+    select.style.borderRadius = '4px';
+    select.style.border = '1px solid #ced4da';
+    
+    // Seçenekleri ekle
+    const options = [
+      {value: 'hepsi', text: 'Tümü'},
+      {value: 'teslim', text: 'Teslim Edildi'},
+      {value: 'teslim-edilmedi', text: 'Teslim Edilmedi'}
+    ];
+    
+    options.forEach(option => {
+      const optElement = document.createElement('option');
+      optElement.value = option.value;
+      optElement.textContent = option.text;
+      select.appendChild(optElement);
+    });
+    
+    // Elemanları birleştir
+    form.appendChild(label);
+    form.appendChild(select);
+    filtreDiv.appendChild(form);
+    
     // Filtreleme alanını tablonun üstüne ekle
     tablo.parentNode.insertBefore(filtreDiv, tablo);
 
-    // Filtreleme işlevi - ID'yi güncelledik
-    document.getElementById(filtreId).addEventListener('change', function() {
+    // Filtreleme işlevi
+    select.addEventListener('change', function() {
       const secim = this.value;
       const satirlar = tablo.querySelectorAll('tbody tr');
 
