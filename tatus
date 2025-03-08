@@ -1,0 +1,15 @@
+ce3c49f Dosya yolları hem localhost hem de GitHub Pages için düzeltildi 2025-03-08
+aa16c36 Form alanlarına id ve name özellikleri eklendi, erişilebilirlik ve otomatik doldurma iyileştirildi 2025-03-08
+1767ec3 Filtreleme kodu doğrudan HTML içine yerleştirildi, bağlantı sorunları giderildi 2025-03-08
+720f32a index.html dosyasına filtreleme.js script bağlantısı eklendi 2025-03-08
+da84442 Test amaçlı metin değişikliği - Evrakı kelimesi Evrağı olarak değiştirildi 2025-03-08
+1c89546 Filtreleme kodunu tamamen basitleştirdim, sadece kullanıcı seçim yaptığında çalışacak şekilde düzenledim 2025-03-08
+faf9382 Filtreleme kodu tamamen yeniden yazıldı, daha güçlü hata yakalama ve uzun bekleme süresi eklendi 2025-03-08
+b442ed8 Erişilebilirlik hatası için tam çözüm: Form elementi ve DOM API ile oluşturulan elementler 2025-03-08
+58d0295 Erişilebilirlik hatası giderildi: label-for ilişkisi düzeltildi, benzersiz ID oluşturuldu 2025-03-08
+aa33915 Filtreleme kodu tamamen basitleştirildi, daha etkili ve anlaşılır hale getirildi 2025-03-08
+3b83bb4 Label ve select ilişkisi tamamen yeniden düzenlendi, erişilebilirlik sorununa kesin çözüm 2025-03-08
+85a50b4 Label-for ilişkisi iyileştirildi, benzersiz ID kullanılarak erişilebilirlik sorunu giderildi 2025-03-08
+095fff4 Label ve select elementlerinin erişilebilirlik sorunu düzeltildi 2025-03-08
+79a9b29 Filtreleme işlemi düzeltildi - sadece seçim yapıldığında çalışacak şekilde değiştirildi 2025-03-08
+aac825a Merge çakışması çözüldü, filtreleme.js geri eklendi 2025-03-08
