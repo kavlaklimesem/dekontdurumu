@@ -1,0 +1,9 @@
+# Dekont Durumu Uygulama Kuralları
+
+1. Her kod değişikliğinden sonra otomatik olarak GitHub'a değişiklikler gönderilecektir.
+   Komutlar:
+   - git add .
+   - git commit -m "Uygulamaya yapılan güncellemeler"
+   - git push origin gh-pages
+
+2. Kullanıcıya her seferinde sorulmadan bu işlemler gerçekleştirilecektir. 
