@@ -1,164 +1,86 @@
-// Tablo ve filtreleme için basit script
+// Basit Tablo Filtreleme Scripti
 (function() {
-  // Sayfa ilk yüklendiğinde, React uygulaması DOM'u tamamen oluşturduktan sonra çalışması için
-  // tabloyu gözleyen bir observer oluşturacağız
-  
-  // Tablo oluşturulunca çalışacak fonksiyon
-  function addTableFilter() {
-    console.log("Tablo bulundu, filtre ekleniyor...");
-    
-    // "Ödeme Evrakı Durumu" başlığını bul
-    const headers = document.querySelectorAll('table th');
-    
-    if (!headers || headers.length === 0) {
-      console.log("Tablo başlıkları bulunamadı");
-      return false;
+  // Sayfa yüklendikten sonra çalışır
+  window.addEventListener('load', function() {
+    // Biraz bekleyerek tablonun yüklenmesi için zaman verin
+    setTimeout(ekleFiltre, 1500);
+  });
+
+  // Filtreleme alanını ekler
+  function ekleFiltre() {
+    // Tabloyu bul
+    const tablo = document.querySelector('table');
+    if (!tablo) {
+      console.log("Tablo bulunamadı!");
+      return;
     }
-    
-    console.log(`${headers.length} adet tablo başlığı bulundu`);
-    
-    // Başlıkları tarayarak "Ödeme Evrakı Durumu" içereni bul
-    let targetIndex = -1;
-    let targetHeader = null;
-    
-    headers.forEach((header, index) => {
-      console.log(`Başlık ${index+1}: "${header.textContent}"`);
-      
-      if (header.textContent.includes("Ödeme Evrakı Durumu")) {
-        targetHeader = header;
-        targetIndex = index;
-        console.log(`"Ödeme Evrakı Durumu" başlığı bulundu. İndex: ${index}`);
+
+    // Tablo başlıklarını bul
+    const basliklar = tablo.querySelectorAll('th');
+    if (!basliklar || basliklar.length === 0) {
+      console.log("Tablo başlıkları bulunamadı!");
+      return;
+    }
+
+    // "Ödeme Evrakı Durumu" sütununu bul
+    let hedefIndex = -1;
+    for (let i = 0; i < basliklar.length; i++) {
+      if (basliklar[i].textContent.includes("Ödeme Evrakı Durumu")) {
+        hedefIndex = i;
+        break;
       }
-    });
-    
-    if (!targetHeader) {
-      console.log("Hedef başlık bulunamadı");
-      return false;
     }
-    
-    // Artık doğru başlığımız var, filtreleme ekleyebiliriz
-    if (targetHeader.querySelector('.filtre-select')) {
-      console.log("Filtre zaten eklenmiş");
-      return true;
+
+    if (hedefIndex === -1) {
+      console.log("Ödeme Evrakı Durumu sütunu bulunamadı!");
+      return;
     }
-    
-    try {
-      // Orijinal başlık metni
-      const originalText = targetHeader.textContent.trim();
-      
-      // Benzersiz ID oluştur
-      const uniqueId = `filtre-select-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
-      
-      // HTML içeriğini doğrudan set et (label ve select ilişkisini HTML içinde kur)
-      targetHeader.innerHTML = `
-        <div class="flex flex-col space-y-1">
-          <label for="${uniqueId}" class="text-xs font-medium text-gray-500 uppercase tracking-wider">${originalText}</label>
-          <select id="${uniqueId}" name="${uniqueId}" class="filtre-select w-full px-1 py-1 text-xs border border-gray-300 rounded-md">
-            <option value="all">Tümü</option>
-            <option value="teslim">Teslim Edildi</option>
-            <option value="teslim-edilmedi">Teslim Edilmedi</option>
-          </select>
-        </div>
-      `;
-      
-      // Select elementi bul ve event listener ekle
-      const filterSelect = targetHeader.querySelector(`#${uniqueId}`);
-      
-      console.log("Filtre dropdown başarıyla eklendi");
-      
-      // Filtreleme işlevi - sadece değişiklik olduğunda çalışacak
-      filterSelect.addEventListener('change', function() {
-        const value = this.value;
-        console.log(`Filtreleme: ${value} seçildi`);
-        
-        // Tablo gövdesini bul
-        const tbody = document.querySelector('table tbody');
-        if (!tbody) {
-          console.error("Tablo gövdesi bulunamadı");
-          return;
+
+    // Tablo üstüne filtreleme alanı ekle
+    const filtreDiv = document.createElement('div');
+    filtreDiv.style.margin = '10px 0';
+    filtreDiv.style.padding = '10px';
+    filtreDiv.style.backgroundColor = '#f8f9fa';
+    filtreDiv.style.borderRadius = '5px';
+
+    filtreDiv.innerHTML = `
+      <label for="durum-filtre" style="margin-right: 10px; font-weight: bold;">Ödeme Durumu Filtrele:</label>
+      <select id="durum-filtre" style="padding: 5px; border-radius: 4px; border: 1px solid #ced4da;">
+        <option value="hepsi">Tümü</option>
+        <option value="teslim">Teslim Edildi</option>
+        <option value="teslim-edilmedi">Teslim Edilmedi</option>
+      </select>
+    `;
+
+    // Filtreleme alanını tablonun üstüne ekle
+    tablo.parentNode.insertBefore(filtreDiv, tablo);
+
+    // Filtreleme işlevi
+    document.getElementById('durum-filtre').addEventListener('change', function() {
+      const secim = this.value;
+      const satirlar = tablo.querySelectorAll('tbody tr');
+
+      satirlar.forEach(satir => {
+        const hucre = satir.querySelectorAll('td')[hedefIndex];
+        if (!hucre) return;
+
+        const checkbox = hucre.querySelector('input[type="checkbox"]');
+        if (!checkbox) return;
+
+        const durumTeslim = checkbox.checked;
+
+        if (secim === 'hepsi') {
+          satir.style.display = ''; // Göster
+        } else if (secim === 'teslim' && !durumTeslim) {
+          satir.style.display = 'none'; // Gizle
+        } else if (secim === 'teslim-edilmedi' && durumTeslim) {
+          satir.style.display = 'none'; // Gizle
+        } else {
+          satir.style.display = ''; // Göster
         }
-        
-        // Tüm satırları filtrele
-        const rows = tbody.querySelectorAll('tr');
-        console.log(`${rows.length} satır filtreleniyor...`);
-        
-        rows.forEach(row => {
-          // Hedef indexteki hücreyi bul
-          const cells = row.querySelectorAll('td');
-          
-          if (targetIndex >= cells.length) {
-            console.warn("Satır için yeterli sütun yok!");
-            return;
-          }
-          
-          const statusCell = cells[targetIndex];
-          const checkbox = statusCell.querySelector('input[type="checkbox"]');
-          
-          if (!checkbox) {
-            console.warn("Checkbox bulunamadı!");
-            return;
-          }
-          
-          const isSubmitted = checkbox.checked;
-          
-          // Filtrele
-          if (value === 'all') {
-            row.style.display = ''; // Göster
-          } else if (value === 'teslim' && !isSubmitted) {
-            row.style.display = 'none'; // Gizle
-          } else if (value === 'teslim-edilmedi' && isSubmitted) {
-            row.style.display = 'none'; // Gizle
-          } else {
-            row.style.display = ''; // Göster
-          }
-        });
       });
-      
-      return true;
-    } catch (err) {
-      console.error(`Filtre ekleme hatası: ${err.message}`);
-      return false;
-    }
-  }
-  
-  // Tablo bulunduğunda filtre ekleyen fonksiyon
-  function setupTable() {
-    // Tablo var mı diye kontrol et
-    const tables = document.querySelectorAll('table');
-    
-    if (tables.length > 0) {
-      console.log(`${tables.length} adet tablo bulundu`);
-      // Filtreleme işlemini ekle
-      addTableFilter();
-      return true;
-    }
-    
-    return false;
-  }
-  
-  // DOM hazır olduğunda çalıştır
-  if (document.readyState === 'loading') {
-    console.log("DOM yükleniyor, event listener eklendi");
-    document.addEventListener('DOMContentLoaded', function() {
-      console.log("DOM yüklendi, tabloyu ayarlıyoruz");
-      // Sayfa yüklendikten 2 saniye sonra bir kez dene
-      setTimeout(function() {
-        if (!setupTable()) {
-          console.log("Tablo bulunamadı, 3 saniye sonra tekrar denenecek");
-          // Eğer ilk denemede başarısız olursa, bir kez daha dene
-          setTimeout(setupTable, 3000);
-        }
-      }, 2000);
     });
-  } else {
-    console.log("DOM zaten yüklü, tabloyu ayarlıyoruz");
-    // Sayfa zaten yüklüyse, hemen dene
-    setTimeout(function() {
-      if (!setupTable()) {
-        console.log("Tablo bulunamadı, 3 saniye sonra tekrar denenecek");
-        // Eğer ilk denemede başarısız olursa, bir kez daha dene
-        setTimeout(setupTable, 3000);
-      }
-    }, 1000);
+
+    console.log("Filtreleme alanı başarıyla eklendi!");
   }
 })(); 
