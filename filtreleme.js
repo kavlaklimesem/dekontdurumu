@@ -21,39 +21,97 @@
   
   // Yükleme işlevi
   function init() {
-    // Sayfa yüklendikten sonra çalış
-    document.addEventListener('DOMContentLoaded', function() {
+    console.log("Filtreleme modülü başlatılıyor...");
+    
+    // Sayfa içeriğini kontrol etmek için belirli aralıklarla deneyelim
+    let attempts = 0;
+    const maxAttempts = 10;
+    const checkInterval = 500; // 500ms
+
+    function checkAndInit() {
+      attempts++;
+      console.log(`DOM kontrol denemesi: ${attempts}`);
+      
       // Ana içerik alanını bul (öğrenci verileri tablosunun olduğu div)
       const mainContent = document.querySelector('.bg-white.rounded-b-2xl.shadow-lg.p-6');
-      if (!mainContent) return;
+      if (!mainContent) {
+        console.log("Ana içerik alanı bulunamadı.");
+        if (attempts < maxAttempts) {
+          setTimeout(checkAndInit, checkInterval);
+        }
+        return;
+      }
+      
+      // İçerik tablosunu kontrol et
+      const tableContainer = mainContent.querySelector('.overflow-x-auto');
+      if (!tableContainer) {
+        console.log("Tablo konteyneri bulunamadı.");
+        if (attempts < maxAttempts) {
+          setTimeout(checkAndInit, checkInterval);
+        }
+        return;
+      }
       
       // Tablo ve öğrencileri kontrol et
-      const table = mainContent.querySelector('table');
-      if (!table) return;
+      const table = tableContainer.querySelector('table');
+      if (!table) {
+        console.log("Tablo bulunamadı.");
+        if (attempts < maxAttempts) {
+          setTimeout(checkAndInit, checkInterval);
+        }
+        return;
+      }
       
       tablebody = table.querySelector('tbody');
-      if (!tablebody) return;
+      if (!tablebody) {
+        console.log("Tablo içeriği bulunamadı.");
+        if (attempts < maxAttempts) {
+          setTimeout(checkAndInit, checkInterval);
+        }
+        return;
+      }
       
       // Tüm satırları al
       tableRows = Array.from(tablebody.querySelectorAll('tr'));
       allRows = [...tableRows];
       
+      console.log(`Bulunan toplam satır sayısı: ${tableRows.length}`);
+      
       // Eğer tabloda satır yoksa döngüyü sonlandır
-      if (tableRows.length === 0) return;
+      if (tableRows.length === 0) {
+        console.log("Tabloda satır bulunamadı.");
+        if (attempts < maxAttempts) {
+          setTimeout(checkAndInit, checkInterval);
+        }
+        return;
+      }
+      
+      console.log("Tablo ve içerik bulundu, filtreleme arayüzü ekleniyor.");
       
       // Filtreleme arayüzünü ekle
-      addFilterInterface(table);
+      addFilterInterface(table, tableContainer);
       
       // İlk sayfa yüklendiğinde filtreleri uygula
       applyFilters();
-    });
+    }
+    
+    // DOM yüklendikten sonra veya hemen başlat
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", checkAndInit);
+    } else {
+      checkAndInit();
+    }
   }
   
   // Filtreleme arayüzünü oluştur
-  function addFilterInterface(table) {
-    // Tablo konteynerını bul
-    const tableContainer = table.closest('.overflow-x-auto');
-    if (!tableContainer) return;
+  function addFilterInterface(table, tableContainer) {
+    if (!tableContainer) {
+      tableContainer = table.closest('.overflow-x-auto');
+      if (!tableContainer) {
+        console.error("Tablo konteyneri bulunamadı!");
+        return;
+      }
+    }
     
     // Filtreleme div'ini oluştur
     const filterDiv = document.createElement('div');
@@ -93,22 +151,41 @@
     
     // Filtreleme arayüzünü tablodan önce yerleştir
     tableContainer.parentNode.insertBefore(filterDiv, tableContainer);
+    console.log("Filtreleme arayüzü eklendi.");
     
     // Event listener'ları ekle
-    document.getElementById('searchInput').addEventListener('input', function(e) {
-      filtrele.searchTerm = e.target.value.toLowerCase();
-      currentPage = 1; // Filtrelemeyi uyguladığımızda ilk sayfaya geri dön
-      applyFilters();
-    });
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput) {
+      searchInput.addEventListener('input', function(e) {
+        filtrele.searchTerm = e.target.value.toLowerCase();
+        currentPage = 1; // Filtrelemeyi uyguladığımızda ilk sayfaya geri dön
+        applyFilters();
+      });
+      console.log("Arama kutusu için event listener eklendi.");
+    } else {
+      console.error("Arama kutusu bulunamadı!");
+    }
     
-    document.getElementById('statusFilter').addEventListener('change', function(e) {
-      filtrele.status = e.target.value;
-      currentPage = 1; // Filtrelemeyi uyguladığımızda ilk sayfaya geri dön
-      applyFilters();
-    });
+    const statusFilter = document.getElementById('statusFilter');
+    if (statusFilter) {
+      statusFilter.addEventListener('change', function(e) {
+        filtrele.status = e.target.value;
+        currentPage = 1; // Filtrelemeyi uyguladığımızda ilk sayfaya geri dön
+        applyFilters();
+      });
+      console.log("Durum filtresi için event listener eklendi.");
+    } else {
+      console.error("Durum filtresi bulunamadı!");
+    }
     
     // Filtreleme bilgilerini güncelle
-    document.getElementById('totalCount').textContent = tableRows.length;
+    const totalCountElement = document.getElementById('totalCount');
+    if (totalCountElement) {
+      totalCountElement.textContent = tableRows.length;
+      console.log(`Toplam öğrenci sayısı: ${tableRows.length}`);
+    } else {
+      console.error("Toplam sayı elemanı bulunamadı!");
+    }
   }
   
   // Filtreleri uygula
@@ -303,14 +380,23 @@
 })();
 
 // Sayfa yüklendiğinde filtreleme modülünü başlat
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', function() {
+(function() {
+  console.log("Filtreleme script dosyası yüklendi.");
+  
+  function startModule() {
     if (window.DecontFiltreleme) {
+      console.log("Filtreleme modülü başlatılıyor...");
       window.DecontFiltreleme.init();
+    } else {
+      console.error("DecontFiltreleme modülü bulunamadı!");
     }
-  });
-} else {
-  if (window.DecontFiltreleme) {
-    window.DecontFiltreleme.init();
   }
-} 
+  
+  if (document.readyState === 'loading') {
+    console.log("DOM yükleniyor, event listener ekleniyor...");
+    document.addEventListener('DOMContentLoaded', startModule);
+  } else {
+    console.log("DOM zaten yüklü, modül başlatılıyor...");
+    startModule();
+  }
+})(); 
