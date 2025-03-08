@@ -43,9 +43,12 @@
     filtreDiv.style.backgroundColor = '#f8f9fa';
     filtreDiv.style.borderRadius = '5px';
 
+    // Benzersiz ID oluştur (tarayıcı uyumluluğu için)
+    const filtreId = `durum_filtresi_${Date.now()}`;
+
     filtreDiv.innerHTML = `
-      <label for="durum-filtre" style="margin-right: 10px; font-weight: bold;">Ödeme Durumu Filtrele:</label>
-      <select id="durum-filtre" style="padding: 5px; border-radius: 4px; border: 1px solid #ced4da;">
+      <label for="${filtreId}" style="margin-right: 10px; font-weight: bold;">Ödeme Durumu Filtrele:</label>
+      <select id="${filtreId}" name="${filtreId}" style="padding: 5px; border-radius: 4px; border: 1px solid #ced4da;">
         <option value="hepsi">Tümü</option>
         <option value="teslim">Teslim Edildi</option>
         <option value="teslim-edilmedi">Teslim Edilmedi</option>
@@ -55,8 +58,8 @@
     // Filtreleme alanını tablonun üstüne ekle
     tablo.parentNode.insertBefore(filtreDiv, tablo);
 
-    // Filtreleme işlevi
-    document.getElementById('durum-filtre').addEventListener('change', function() {
+    // Filtreleme işlevi - ID'yi güncelledik
+    document.getElementById(filtreId).addEventListener('change', function() {
       const secim = this.value;
       const satirlar = tablo.querySelectorAll('tbody tr');
 
