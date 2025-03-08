@@ -46,37 +46,23 @@
       // Orijinal başlık metni
       const originalText = targetHeader.textContent.trim();
       
-      // Başlığı temizle ve yeni içerik oluştur
-      targetHeader.innerHTML = '';
-      
-      // Başlık + filtreleme içeren div oluştur
-      const headerDiv = document.createElement('div');
-      headerDiv.className = 'flex flex-col space-y-1';
-      
       // Benzersiz ID oluştur
-      const uniqueId = `filtre-select-${targetIndex}`;
+      const uniqueId = `filtre-select-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
       
-      // Label element oluştur
-      const titleLabel = document.createElement('label');
-      titleLabel.textContent = originalText;
-      titleLabel.className = 'text-xs font-medium text-gray-500 uppercase tracking-wider';
-      titleLabel.htmlFor = uniqueId; // for attribute için htmlFor kullan
-      headerDiv.appendChild(titleLabel);
-      
-      // Filtreleme select menüsünü ekle
-      const filterSelect = document.createElement('select');
-      filterSelect.id = uniqueId; // Benzersiz ID kullan
-      filterSelect.name = uniqueId; // Aynı ID'yi name olarak da kullan
-      filterSelect.className = 'filtre-select w-full px-1 py-1 text-xs border border-gray-300 rounded-md';
-      filterSelect.innerHTML = `
-        <option value="all">Tümü</option>
-        <option value="teslim">Teslim Edildi</option>
-        <option value="teslim-edilmedi">Teslim Edilmedi</option>
+      // HTML içeriğini doğrudan set et (label ve select ilişkisini HTML içinde kur)
+      targetHeader.innerHTML = `
+        <div class="flex flex-col space-y-1">
+          <label for="${uniqueId}" class="text-xs font-medium text-gray-500 uppercase tracking-wider">${originalText}</label>
+          <select id="${uniqueId}" name="${uniqueId}" class="filtre-select w-full px-1 py-1 text-xs border border-gray-300 rounded-md">
+            <option value="all">Tümü</option>
+            <option value="teslim">Teslim Edildi</option>
+            <option value="teslim-edilmedi">Teslim Edilmedi</option>
+          </select>
+        </div>
       `;
-      headerDiv.appendChild(filterSelect);
       
-      // Oluşturduğumuz içeriği başlığa ekle
-      targetHeader.appendChild(headerDiv);
+      // Select elementi bul ve event listener ekle
+      const filterSelect = targetHeader.querySelector(`#${uniqueId}`);
       
       console.log("Filtre dropdown başarıyla eklendi");
       
