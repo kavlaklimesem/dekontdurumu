@@ -74,7 +74,7 @@
       
       console.log("Filtre dropdown başarıyla eklendi");
       
-      // Filtreleme işlevi
+      // Filtreleme işlevi - sadece değişiklik olduğunda çalışacak
       filterSelect.addEventListener('change', function() {
         const value = this.value;
         console.log(`Filtreleme: ${value} seçildi`);
@@ -129,56 +129,44 @@
     }
   }
   
-  // React bileşenini bekleyip gözleyen fonksiyon
-  function watchForTable() {
-    console.log("Tablo gözlemi başlatılıyor...");
+  // Tablo bulunduğunda filtre ekleyen fonksiyon
+  function setupTable() {
+    // Tablo var mı diye kontrol et
+    const tables = document.querySelectorAll('table');
     
-    // Maksimum deneme sayısını tanımla
-    let tryCount = 0;
-    const maxTries = 10; // Maksimum 10 deneme yapacak
+    if (tables.length > 0) {
+      console.log(`${tables.length} adet tablo bulundu`);
+      // Filtreleme işlemini ekle
+      addTableFilter();
+      return true;
+    }
     
-    // Tabloyu bulmayı dene
-    const checkForTable = () => {
-      // Maksimum deneme sayısını kontrol et
-      if (tryCount >= maxTries) {
-        console.log(`Maksimum deneme sayısına (${maxTries}) ulaşıldı. Tablo bulunamadı.`);
-        return; // Fonksiyondan çık, daha fazla tekrar etme
-      }
-      
-      tryCount++; // Deneme sayısını artır
-      
-      // Tablo var mı diye kontrol edelim
-      const tables = document.querySelectorAll('table');
-      
-      if (tables.length > 0) {
-        console.log(`${tables.length} adet tablo bulundu`);
-        const success = addTableFilter();
-        if (!success) {
-          // Tablo bulundu ama filtreleme eklenemedi, 
-          // muhtemelen içerik henüz hazır değil, biraz daha bekleyelim
-          console.log(`Tablo içeriği tam oluşmamış, tekrar denenecek... (${tryCount}/${maxTries})`);
-          setTimeout(checkForTable, 500);
-        }
-      } else {
-        // Tablo henüz oluşturulmamış, tekrar deneyelim
-        console.log(`Henüz tablo oluşmamış, 1 saniye sonra tekrar deneniyor... (${tryCount}/${maxTries})`);
-        setTimeout(checkForTable, 1000);
-      }
-    };
-    
-    // İlk kontrol
-    setTimeout(checkForTable, 2000); // React uygulamasının yüklenmesi için 2 saniye bekle
+    return false;
   }
   
   // DOM hazır olduğunda çalıştır
   if (document.readyState === 'loading') {
     console.log("DOM yükleniyor, event listener eklendi");
     document.addEventListener('DOMContentLoaded', function() {
-      console.log("DOM yüklendi, tabloyu gözlemeye başlıyoruz");
-      watchForTable();
+      console.log("DOM yüklendi, tabloyu ayarlıyoruz");
+      // Sayfa yüklendikten 2 saniye sonra bir kez dene
+      setTimeout(function() {
+        if (!setupTable()) {
+          console.log("Tablo bulunamadı, 3 saniye sonra tekrar denenecek");
+          // Eğer ilk denemede başarısız olursa, bir kez daha dene
+          setTimeout(setupTable, 3000);
+        }
+      }, 2000);
     });
   } else {
-    console.log("DOM zaten yüklü, tabloyu gözlemeye başlıyoruz");
-    watchForTable();
+    console.log("DOM zaten yüklü, tabloyu ayarlıyoruz");
+    // Sayfa zaten yüklüyse, hemen dene
+    setTimeout(function() {
+      if (!setupTable()) {
+        console.log("Tablo bulunamadı, 3 saniye sonra tekrar denenecek");
+        // Eğer ilk denemede başarısız olursa, bir kez daha dene
+        setTimeout(setupTable, 3000);
+      }
+    }, 1000);
   }
 })(); 
