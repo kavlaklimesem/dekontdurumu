@@ -133,8 +133,20 @@
   function watchForTable() {
     console.log("Tablo gözlemi başlatılıyor...");
     
+    // Maksimum deneme sayısını tanımla
+    let tryCount = 0;
+    const maxTries = 10; // Maksimum 10 deneme yapacak
+    
     // Tabloyu bulmayı dene
     const checkForTable = () => {
+      // Maksimum deneme sayısını kontrol et
+      if (tryCount >= maxTries) {
+        console.log(`Maksimum deneme sayısına (${maxTries}) ulaşıldı. Tablo bulunamadı.`);
+        return; // Fonksiyondan çık, daha fazla tekrar etme
+      }
+      
+      tryCount++; // Deneme sayısını artır
+      
       // Tablo var mı diye kontrol edelim
       const tables = document.querySelectorAll('table');
       
@@ -144,12 +156,12 @@
         if (!success) {
           // Tablo bulundu ama filtreleme eklenemedi, 
           // muhtemelen içerik henüz hazır değil, biraz daha bekleyelim
-          console.log("Tablo içeriği tam oluşmamış, tekrar denenecek...");
+          console.log(`Tablo içeriği tam oluşmamış, tekrar denenecek... (${tryCount}/${maxTries})`);
           setTimeout(checkForTable, 500);
         }
       } else {
         // Tablo henüz oluşturulmamış, tekrar deneyelim
-        console.log("Henüz tablo oluşmamış, 1 saniye sonra tekrar deneniyor...");
+        console.log(`Henüz tablo oluşmamış, 1 saniye sonra tekrar deneniyor... (${tryCount}/${maxTries})`);
         setTimeout(checkForTable, 1000);
       }
     };
