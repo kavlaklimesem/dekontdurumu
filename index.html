@@ -5,8 +5,16 @@
     <link rel="icon" type="image/svg+xml" href="./vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Vite + React + TS</title>
-    <script type="module" crossorigin src="/dekontdurumu/assets/index-XVworRfv.js"></script>
-    <link rel="stylesheet" crossorigin href="/dekontdurumu/assets/index-BtaKioX-.css">
+    <script>
+      // Çalıştığı ortama göre doğru asset yollarını belirle
+      var baseUrl = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
+        ? './' 
+        : '/dekontdurumu/';
+      
+      // CSS ve JS dosyalarını dinamik olarak ekle
+      document.write('<script type="module" crossorigin src="' + baseUrl + 'assets/index-XVworRfv.js"><\/script>');
+      document.write('<link rel="stylesheet" crossorigin href="' + baseUrl + 'assets/index-BtaKioX-.css">');
+    </script>
   </head>
   <body>
     <div id="root"></div>
