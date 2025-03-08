@@ -40,8 +40,8 @@
       <label for="odeme-filtre" style="margin-right: 10px; font-weight: bold;">Ödeme Durumu Filtrele:</label>
       <select id="odeme-filtre" style="padding: 5px 10px; border: 1px solid #ced4da; border-radius: 4px;">
         <option value="hepsi">Tümü</option>
-        <option value="teslim-edildi">Ödeme Evrakı Teslim Edildi</option>
-        <option value="teslim-edilmedi">Ödeme Evrakı Zamanında Teslim Edilmedi</option>
+        <option value="teslim-edildi">Ödeme Evrağı Teslim Edildi</option>
+        <option value="teslim-edilmedi">Ödeme Evrağı Zamanında Teslim Edilmedi</option>
       </select>
     `;
     
