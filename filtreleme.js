@@ -53,22 +53,20 @@
       const headerDiv = document.createElement('div');
       headerDiv.className = 'flex flex-col space-y-1';
       
-      // Orijinal başlık metnini ekle
-      const titleSpan = document.createElement('span');
-      titleSpan.textContent = originalText;
-      titleSpan.className = 'text-xs font-medium text-gray-500 uppercase tracking-wider';
+      // Benzersiz ID oluştur
+      const uniqueId = `filtre-select-${targetIndex}`;
       
-      // Label element olarak değiştir ve for attribute ekle
+      // Label element oluştur
       const titleLabel = document.createElement('label');
       titleLabel.textContent = originalText;
       titleLabel.className = 'text-xs font-medium text-gray-500 uppercase tracking-wider';
-      titleLabel.setAttribute('for', 'filtreleme-select');
+      titleLabel.htmlFor = uniqueId; // for attribute için htmlFor kullan
       headerDiv.appendChild(titleLabel);
       
       // Filtreleme select menüsünü ekle
       const filterSelect = document.createElement('select');
-      filterSelect.id = 'filtreleme-select'; // ID ekle
-      filterSelect.name = 'filtreleme-select'; // Name ekle (form doldurma için)
+      filterSelect.id = uniqueId; // Benzersiz ID kullan
+      filterSelect.name = uniqueId; // Aynı ID'yi name olarak da kullan
       filterSelect.className = 'filtre-select w-full px-1 py-1 text-xs border border-gray-300 rounded-md';
       filterSelect.innerHTML = `
         <option value="all">Tümü</option>
